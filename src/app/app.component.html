@@ -1,33 +1,50 @@
 <main class="main">
   <div class="content">
-    <div>
-      <input class="input-text" type="text" placeholder="พิมพ์ข้อความที่นี่..."/>
-    </div>
-    <div>
-      <button class="add-button" onclick="createRipple(event)">ADD TO LIST</button>
+    <div class="todo-container">
+      <h1 class="todo-title">รายการสิ่งที่ต้องทำ</h1>
+
+      <!-- ส่วนของการป้อนข้อมูล -->
+      <div class="input-section">
+        <input
+          class="input-text"
+          type="text"
+          placeholder="พิมพ์ข้อความที่นี่..."
+          [(ngModel)]="todoText"
+          (keyup.enter)="addTodo()"
+        />
+        <button class="add-button" (click)="addTodo(); createRipple($event)">
+          เพิ่มรายการ
+        </button>
+      </div>
+
+      <!-- ส่วนแสดงรายการ Todo -->
+      <div class="todo-list" *ngIf="todos.length > 0">
+        <div
+          class="todo-item"
+          *ngFor="let todo of todos"
+          [class.completed]="todo.completed"
+        >
+          <div class="todo-text-container">
+            <input
+              type="checkbox"
+              [checked]="todo.completed"
+              (change)="toggleComplete(todo.id)"
+              class="todo-checkbox"
+            />
+            <span class="todo-text">{{ todo.text }}</span>
+          </div>
+          <button class="delete-button" (click)="deleteTodo(todo.id)">
+            ลบ
+          </button>
+        </div>
+      </div>
+
+      <!-- ข้อความเมื่อไม่มีรายการ -->
+      <div class="empty-state" *ngIf="todos.length === 0">
+        <p>ยังไม่มีรายการที่ต้องทำ</p>
+      </div>
     </div>
   </div>
 </main>
 
 <router-outlet />
-
-<script>
-function createRipple(event) {
-  const button = event.currentTarget;
-  const ripple = document.createElement("span");
-  ripple.classList.add("ripple");
-  
-  const rect = button.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  
-  ripple.style.left = `${x}px`;
-  ripple.style.top = `${y}px`;
-  
-  button.appendChild(ripple);
-  
-  setTimeout(() => {
-    ripple.remove();
-  }, 600);
-}
-</script>
